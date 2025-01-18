@@ -1,7 +1,6 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.FilmDTO;
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.FilmService;
 import org.springframework.core.ParameterizedTypeReference;
