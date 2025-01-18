@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class PeopleServiceImpl implements PeopleService {
 
-    private final String BASE_URL_PEOPLES = "https://www.swapi.tech/api/people/";
+    private final String BASE_URL_PEOPLES = "http://www.swapi.tech/api/people/";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
