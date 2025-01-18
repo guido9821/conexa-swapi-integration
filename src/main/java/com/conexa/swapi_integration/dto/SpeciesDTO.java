@@ -1,4 +1,4 @@
-package com.conexa.swapi_integration.DTO;
+package com.conexa.swapi_integration.dto;
 
 import java.util.List;
 

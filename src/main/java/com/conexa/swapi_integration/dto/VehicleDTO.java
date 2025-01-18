@@ -1,4 +1,4 @@
-package com.conexa.swapi_integration.DTO;
+package com.conexa.swapi_integration.dto;
 
 public class VehicleDTO {
     private String name;
