@@ -1,5 +1,9 @@
 package com.conexa.swapi_integration.dto;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VehicleDTO {
     private String name;
     private String model;

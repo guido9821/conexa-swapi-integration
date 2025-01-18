@@ -20,8 +20,6 @@ public class SwapiIntegrationApplication {
 		SpeciesService speciesService = new SpeciesServiceImpl();
 			peopleService.getAllPeople(1,5);
             filmService.getAllFilms(1,5);
-			speciesService.getAllFilms(1,5);
-
             //peopleService.findPeopleById(2);
         SpringApplication.run(SwapiIntegrationApplication.class, args);
 
