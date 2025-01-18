@@ -1,7 +1,10 @@
-package com.conexa.swapi_integration.DTO;
+package com.conexa.swapi_integration.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SpeciesDTO {
 
     private String name;

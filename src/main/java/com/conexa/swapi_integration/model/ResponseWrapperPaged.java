@@ -1,15 +1,18 @@
 package com.conexa.swapi_integration.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
-public class ResponseWrapper<T> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ResponseWrapperPaged<T> {
 
     private int count;
     private String next;
     private String previous;
     private List<T> results;
 
-    public ResponseWrapper() {
+    public ResponseWrapperPaged() {
     }
 
     public int getCount() {

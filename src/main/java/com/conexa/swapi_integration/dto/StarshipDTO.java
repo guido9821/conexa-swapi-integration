@@ -1,6 +1,6 @@
-package com.conexa.swapi_integration.DTO;
+package com.conexa.swapi_integration.dto;
 
-public class VehicleDTO {
+public class StarshipDTO {
     private String name;
     private String model;
     private String manufacturer;
@@ -10,7 +10,7 @@ public class VehicleDTO {
     private String crew;
     private String passengers;
     private String cargoCapacity;
-    private String vehicleClass;
+    private String starshipClass;
 
     public String getName() {
         return name;
@@ -84,11 +84,11 @@ public class VehicleDTO {
         this.cargoCapacity = cargoCapacity;
     }
 
-    public String getVehicleClass() {
-        return vehicleClass;
+    public String getStarshipClass() {
+        return starshipClass;
     }
 
-    public void setVehicleClass(String vehicleClass) {
-        this.vehicleClass = vehicleClass;
+    public void setStarshipClass(String starshipClass) {
+        this.starshipClass = starshipClass;
     }
 }

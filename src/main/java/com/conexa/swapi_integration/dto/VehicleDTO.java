@@ -1,6 +1,10 @@
-package com.conexa.swapi_integration.DTO;
+package com.conexa.swapi_integration.dto;
 
-public class StarshipDTO {
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class VehicleDTO {
     private String name;
     private String model;
     private String manufacturer;
@@ -10,7 +14,7 @@ public class StarshipDTO {
     private String crew;
     private String passengers;
     private String cargoCapacity;
-    private String starshipClass;
+    private String vehicleClass;
 
     public String getName() {
         return name;
@@ -84,11 +88,11 @@ public class StarshipDTO {
         this.cargoCapacity = cargoCapacity;
     }
 
-    public String getStarshipClass() {
-        return starshipClass;
+    public String getVehicleClass() {
+        return vehicleClass;
     }
 
-    public void setStarshipClass(String starshipClass) {
-        this.starshipClass = starshipClass;
+    public void setVehicleClass(String vehicleClass) {
+        this.vehicleClass = vehicleClass;
     }
 }
