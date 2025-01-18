@@ -27,10 +27,6 @@ public class PeopleServiceImpl implements PeopleService {
 
     @Override
     public PeopleDTO findPeopleById(int id) {
-        ResponseEntity<PeopleDTO> responseEntity = restTemplate.getForEntity(BASE_URL_PEOPLES + id, PeopleDTO.class);
-        if (responseEntity.getBody() != null){
-            return responseEntity.getBody();
-        }
-        return null;
+        return restTemplate.getForObject(BASE_URL_PEOPLES + "/" + id, PeopleDTO.class);
     }
 }
