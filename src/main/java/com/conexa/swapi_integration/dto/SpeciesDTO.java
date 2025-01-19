@@ -1,6 +1,7 @@
 package com.conexa.swapi_integration.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -10,15 +11,28 @@ public class SpeciesDTO {
     private String name;
     private String classification;
     private String designation;
+
+    @JsonProperty("average_height")
     private String averageHeight;
+
+    @JsonProperty("average_lifespan")
     private String averageLifespan;
+
+    @JsonProperty("eye_colors")
     private String eyeColors;
+
+    @JsonProperty("hair_colors")
     private String hairColors;
+
+    @JsonProperty("skin_colors")
     private String skinColors;
+
     private String language;
+
+    @JsonProperty("homeworld")
     private String homeWorld;
+
     private List<String> people;
-    private List<String> films;
 
     public String getName() {
         return name;
@@ -108,11 +122,4 @@ public class SpeciesDTO {
         this.people = people;
     }
 
-    public List<String> getFilms() {
-        return films;
-    }
-
-    public void setFilms(List<String> films) {
-        this.films = films;
-    }
 }

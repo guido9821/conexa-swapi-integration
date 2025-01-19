@@ -2,7 +2,6 @@ package com.conexa.swapi_integration.model;
 
 import com.conexa.swapi_integration.dto.ResultDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
