@@ -25,9 +25,43 @@ public class PeopleDTO {
     private String birthYear;
 
     private String gender;
-    private List<String> films;
-    private List<String> starships;
-    private List<String> vehicles;
+    private String created;
+    private String edited;
+    @JsonProperty("homeworld")
+    private String homeWorld;
+    private String url;
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public String getEdited() {
+        return edited;
+    }
+
+    public void setEdited(String edited) {
+        this.edited = edited;
+    }
+
+    public String getHomeWorld() {
+        return homeWorld;
+    }
+
+    public void setHomeWorld(String homeWorld) {
+        this.homeWorld = homeWorld;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getName() {
         return name;
@@ -93,27 +127,4 @@ public class PeopleDTO {
         this.gender = gender;
     }
 
-    public List<String> getFilms() {
-        return films;
-    }
-
-    public void setFilms(List<String> films) {
-        this.films = films;
-    }
-
-    public List<String> getStarships() {
-        return starships;
-    }
-
-    public void setStarships(List<String> starships) {
-        this.starships = starships;
-    }
-
-    public List<String> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(List<String> vehicles) {
-        this.vehicles = vehicles;
-    }
 }

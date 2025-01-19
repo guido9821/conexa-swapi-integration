@@ -2,19 +2,60 @@ package com.conexa.swapi_integration.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VehicleDTO {
     private String name;
     private String model;
     private String manufacturer;
+
+    @JsonProperty("cost_in_credits")
     private String costInCredits;
+
     private String length;
+
+    @JsonProperty("max_atmosphering_speed")
     private String maxAtmospheringSpeed;
+
     private String crew;
     private String passengers;
+
+    @JsonProperty("cargo_capacity")
     private String cargoCapacity;
+
+    @JsonProperty("vehicle_class")
     private String vehicleClass;
+
+    private List<String> films;
+    private List<String> pilots;
+    private String consumables;
+
+    public List<String> getFilms() {
+        return films;
+    }
+
+    public void setFilms(List<String> films) {
+        this.films = films;
+    }
+
+    public List<String> getPilots() {
+        return pilots;
+    }
+
+    public void setPilots(List<String> pilots) {
+        this.pilots = pilots;
+    }
+
+    public String getConsumables() {
+        return consumables;
+    }
+
+    public void setConsumables(String consumables) {
+        this.consumables = consumables;
+    }
 
     public String getName() {
         return name;
