@@ -1,6 +1,7 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.StarshipDTO;
+import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.StarshipService;
 import org.springframework.core.ParameterizedTypeReference;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 @Service
 public class StarshipServiceImpl implements StarshipService {
@@ -28,7 +31,17 @@ public class StarshipServiceImpl implements StarshipService {
 
     @Override
     public StarshipDTO findStarshipById(int id) {
-        return restTemplate.getForObject(BASE_URL_STARSHIP + "/" + id, StarshipDTO.class);
-
+        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
+        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
+        try {
+            ResponseWrapper<StarshipDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), StarshipDTO.class);
+            if(responseWrapper.getResultDTO() != null ){
+                return responseWrapper.getResultDTO().getProperties();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }

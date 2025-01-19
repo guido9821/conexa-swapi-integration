@@ -1,16 +1,50 @@
 package com.conexa.swapi_integration.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StarshipDTO {
     private String name;
     private String model;
     private String manufacturer;
+
+    @JsonProperty("cost_in_credits")
     private String costInCredits;
+
     private String length;
+    @JsonProperty("max_atmosphering_speed")
     private String maxAtmospheringSpeed;
+
     private String crew;
     private String passengers;
+    @JsonProperty("cargo_capacity")
     private String cargoCapacity;
+
+    @JsonProperty("starship_class")
     private String starshipClass;
+
+    private String MGLT;
+
+    public String getMGLT() {
+        return MGLT;
+    }
+
+    public void setMGLT(String MGLT) {
+        this.MGLT = MGLT;
+    }
+
+    private List<String> pilots;
+
+    public List<String> getPilots() {
+        return pilots;
+    }
+
+    public void setPilots(List<String> pilots) {
+        this.pilots = pilots;
+    }
 
     public String getName() {
         return name;
