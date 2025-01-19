@@ -1,9 +1,9 @@
 package com.conexa.swapi_integration.service.impl;
 
-import com.conexa.swapi_integration.dto.SpeciesDTO;
+import com.conexa.swapi_integration.dto.PlanetDTO;
 import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
-import com.conexa.swapi_integration.service.SpeciesService;
+import com.conexa.swapi_integration.service.PlanetService;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -15,29 +15,28 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class SpeciesServiceImpl implements SpeciesService {
+public class PlanetServiceImpl implements PlanetService {
 
-    private final String BASE_URL_SPECIES = "https://www.swapi.tech/api/species/";
+    private final String BASE_URL_PLANETS = "https://www.swapi.tech/api/planets/";
     private final RestTemplate restTemplate = new RestTemplate();
-
+    
     @Override
-    public ResponseWrapperPaged<SpeciesDTO> getAllSpecies(int page, int limit){
-        ResponseEntity<ResponseWrapperPaged<SpeciesDTO>> responseEntity = restTemplate.exchange(BASE_URL_SPECIES + "?page=" + page + "&limit=" + limit,
-                HttpMethod.GET, null, new ParameterizedTypeReference<ResponseWrapperPaged<SpeciesDTO>>() {});
+    public ResponseWrapperPaged<PlanetDTO> getAllPlanets(int page, int limit) {
+        ResponseEntity<ResponseWrapperPaged<PlanetDTO>> responseEntity = restTemplate.exchange(BASE_URL_PLANETS + "?page=" + page + "&limit=" + limit,
+                HttpMethod.GET, null, new ParameterizedTypeReference<ResponseWrapperPaged<PlanetDTO>>() {});
         if( responseEntity.getBody() != null && responseEntity.getBody().getResults() != null){
             return responseEntity.getBody();
         }
         return null;
     }
 
-
     @Override
-    public SpeciesDTO findSpeciesById(int id) {
+    public PlanetDTO findPlanetById(int id) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_SPECIES + id, HttpMethod.GET, null, String.class);
+                BASE_URL_PLANETS + id, HttpMethod.GET, null, String.class);
         System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
-            ResponseWrapper<SpeciesDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), SpeciesDTO.class);
+            ResponseWrapper<PlanetDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), PlanetDTO.class);
             if(responseWrapper.getResultDTO() != null ){
                 return responseWrapper.getResultDTO().getProperties();
             }
@@ -48,14 +47,13 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public List<SpeciesDTO> findSpeciesByName(String name) {
+    public List<PlanetDTO> findPlanetByName(String name) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_SPECIES + "?name=" + name, HttpMethod.GET, null, String.class);
+                BASE_URL_PLANETS + "?name=" + name, HttpMethod.GET, null, String.class);
         try {
-            return MapperUtil.getObjectListFromJson(responseEntityRaw, SpeciesDTO.class);
+            return MapperUtil.getObjectListFromJson(responseEntityRaw, PlanetDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 }
-

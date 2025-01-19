@@ -23,4 +23,9 @@ public class FilmController {
     public FilmDTO getFilmById(@PathVariable int id) {
         return filmService.findFilmById(id);
     }
+
+    @GetMapping("/films/searchByTitle/")
+    public List<FilmDTO> getFilmsByTitle(@RequestParam String title) {
+        return filmService.getFilmsByTitle(title);
+    }
 }

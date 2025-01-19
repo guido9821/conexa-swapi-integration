@@ -7,6 +7,8 @@ import com.conexa.swapi_integration.service.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class PeopleController {
@@ -22,5 +24,10 @@ public class PeopleController {
     @GetMapping("/people/{id}")
     public PeopleDTO getPersonById(@PathVariable int id) {
         return peopleService.findPeopleById(id);
+    }
+
+    @GetMapping("/people/searchByName/")
+    public List<PeopleDTO> getPeopleByName(@RequestParam String name) {
+        return peopleService.findPeopleByName(name);
     }
 }
