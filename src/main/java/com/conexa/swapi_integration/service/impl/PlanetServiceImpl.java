@@ -18,7 +18,11 @@ import java.util.List;
 public class PlanetServiceImpl implements PlanetService {
 
     private final String BASE_URL_PLANETS = "https://www.swapi.tech/api/planets/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public PlanetServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
     
     @Override
     public ResponseWrapperPaged<PlanetDTO> getAllPlanets(int page, int limit) {

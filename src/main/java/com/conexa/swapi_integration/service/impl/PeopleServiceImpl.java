@@ -15,11 +15,19 @@ import java.util.List;
 @Service
 public class PeopleServiceImpl implements PeopleService {
 
-    private final String BASE_URL_PEOPLE = "http://www.swapi.tech/api/people/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final String BASE_URL_PEOPLE = "https://www.swapi.tech/api/people/";
+    private final RestTemplate restTemplate;
+
+    public PeopleServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public ResponseWrapperPaged<PeopleDTO> getAllPeople(int page, int limit){
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
         ResponseEntity<ResponseWrapperPaged<PeopleDTO>> responseEntity = restTemplate.exchange(BASE_URL_PEOPLE + "?page=" + page + "&limit=" + limit,
                 HttpMethod.GET, null, new ParameterizedTypeReference<ResponseWrapperPaged<PeopleDTO>>() {});
         if( responseEntity.getBody() != null && responseEntity.getBody().getResults() != null){
