@@ -1,12 +1,10 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.FilmDTO;
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.ResultDTO;
 import com.conexa.swapi_integration.model.ResponseWrapper;
-import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.FilmService;
-import org.springframework.core.ParameterizedTypeReference;
+import com.conexa.swapi_integration.util.MapperUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,10 +26,8 @@ public class FilmServiceImpl implements FilmService{
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                     BASE_URL_FILMS, HttpMethod.GET, null, String.class);
 
-            // Deserializar la respuesta JSON
             ResponseWrapper<FilmDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), FilmDTO.class);
 
-            // Verificar y convertir la lista de resultados
             if (responseWrapper.getResultDTOList() != null) {
                 return getFilmList(responseWrapper.getResultDTOList());
             }
@@ -45,23 +41,28 @@ public class FilmServiceImpl implements FilmService{
     public FilmDTO findFilmById(int id) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_FILMS + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
-            ResponseWrapper<FilmDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), FilmDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
-                return responseWrapper.getResultDTO().getProperties();
-            }
+            MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
+    @Override
+    public List<FilmDTO>getFilmsByTitle(String title) {
+        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_FILMS + "?title=" + title, HttpMethod.GET, null, String.class);
+        try {
+            return MapperUtil.getObjectListFromJson(responseEntityRaw, FilmDTO.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private List<FilmDTO> getFilmList(List<ResultDTO<FilmDTO>> resultDTOList){
         List<FilmDTO> filmList = new ArrayList<>();
-        resultDTOList.forEach(resultDTO -> {
-            filmList.add(resultDTO.getProperties());
-        });
+        resultDTOList.forEach(resultDTO -> filmList.add(resultDTO.getProperties()));
         return filmList;
     }
 }

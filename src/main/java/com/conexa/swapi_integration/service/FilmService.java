@@ -8,4 +8,6 @@ import java.util.List;
 public interface FilmService {
     List<FilmDTO> getAllFilms();
     FilmDTO findFilmById(int id);
+    List<FilmDTO> getFilmsByTitle(String title);
+
 }
