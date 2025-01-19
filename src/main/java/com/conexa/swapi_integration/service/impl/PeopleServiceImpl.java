@@ -1,11 +1,11 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.PeopleDTO;
+import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PeopleService;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +27,13 @@ public class PeopleServiceImpl implements PeopleService {
 
     @Override
     public PeopleDTO findPeopleById(int id) {
-        return restTemplate.getForObject(BASE_URL_PEOPLES + "/" + id, PeopleDTO.class);
+        ResponseEntity<ResponseWrapper<PeopleDTO>> responseEntity = restTemplate.exchange(BASE_URL_PEOPLES  + id,
+                HttpMethod.GET, null, new ParameterizedTypeReference<ResponseWrapper<PeopleDTO>>() {});
+        if (responseEntity.getBody() != null) {
+            return responseEntity.getBody().getResult().getProperties();
+        }else{
+            System.err.println("No se pudo obtener el resultado.");
+        }
+        return null;
     }
 }

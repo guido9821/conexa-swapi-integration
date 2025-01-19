@@ -1,6 +1,7 @@
 package com.conexa.swapi_integration.service;
 
 import com.conexa.swapi_integration.dto.PeopleDTO;
+import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 
 public interface PeopleService {
