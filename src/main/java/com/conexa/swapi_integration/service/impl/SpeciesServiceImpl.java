@@ -18,7 +18,11 @@ import java.util.List;
 public class SpeciesServiceImpl implements SpeciesService {
 
     private final String BASE_URL_SPECIES = "https://www.swapi.tech/api/species/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public SpeciesServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public ResponseWrapperPaged<SpeciesDTO> getAllSpecies(int page, int limit){
@@ -35,7 +39,6 @@ public class SpeciesServiceImpl implements SpeciesService {
     public SpeciesDTO findSpeciesById(int id) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_SPECIES + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
             ResponseWrapper<SpeciesDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), SpeciesDTO.class);
             if(responseWrapper.getResultDTO() != null ){

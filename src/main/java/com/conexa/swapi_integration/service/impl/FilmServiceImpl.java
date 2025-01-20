@@ -18,7 +18,11 @@ import java.util.List;
 public class FilmServiceImpl implements FilmService{
 
     private final String BASE_URL_FILMS = "https://www.swapi.tech/api/films/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public FilmServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public List<FilmDTO> getAllFilms(){
@@ -42,11 +46,10 @@ public class FilmServiceImpl implements FilmService{
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_FILMS + id, HttpMethod.GET, null, String.class);
         try {
-            MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
+            return MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override

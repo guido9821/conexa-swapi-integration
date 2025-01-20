@@ -19,7 +19,11 @@ import java.util.List;
 public class StarshipServiceImpl implements StarshipService {
 
     private final String BASE_URL_STARSHIP = "https://www.swapi.tech/api/starships/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public StarshipServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public ResponseWrapperPaged<StarshipDTO> getAllStarship(int page, int limit){
@@ -36,7 +40,6 @@ public class StarshipServiceImpl implements StarshipService {
     public StarshipDTO findStarshipById(int id) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
             ResponseWrapper<StarshipDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), StarshipDTO.class);
             if(responseWrapper.getResultDTO() != null ){

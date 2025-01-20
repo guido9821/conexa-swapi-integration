@@ -1,7 +1,6 @@
 package com.conexa.swapi_integration.controller;
 
 import com.conexa.swapi_integration.dto.PeopleDTO;
-import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;

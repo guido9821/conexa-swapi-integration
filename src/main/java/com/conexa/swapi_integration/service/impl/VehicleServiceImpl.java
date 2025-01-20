@@ -16,7 +16,12 @@ import java.io.IOException;
 public class VehicleServiceImpl implements VehicleService {
 
     private final String BASE_URL_VEHICLES = "https://www.swapi.tech/api/vehicles/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public VehicleServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Override
     public ResponseWrapperPaged<VehicleDTO> getAllVehicle(int page, int limit){
         ResponseEntity<ResponseWrapperPaged<VehicleDTO>> responseEntity = restTemplate.exchange(BASE_URL_VEHICLES + "?page=" + page + "&limit=" + limit,
@@ -32,7 +37,6 @@ public class VehicleServiceImpl implements VehicleService {
 
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_VEHICLES + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
             ResponseWrapper<VehicleDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), VehicleDTO.class);
             if(responseWrapper.getResultDTO() != null ){

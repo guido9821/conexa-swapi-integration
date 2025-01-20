@@ -19,11 +19,9 @@ public class ResponseWrapper <T>{
     public static <T> ResponseWrapper<T> fromJson(String json, Class<T> resultType) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(json);
-
         ResponseWrapper<T> wrapper = new ResponseWrapper<>();
         wrapper.setMessage(rootNode.path("message").asText());
         wrapper.setDescription(rootNode.path("description").asText());
-
         JsonNode resultNode = rootNode.path("result");
         if (resultNode.isArray()) {
             List<ResultDTO<T>> results = objectMapper.readValue(
