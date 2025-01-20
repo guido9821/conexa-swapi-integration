@@ -46,11 +46,10 @@ public class FilmServiceImpl implements FilmService{
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_FILMS + id, HttpMethod.GET, null, String.class);
         try {
-            MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
+            return MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override

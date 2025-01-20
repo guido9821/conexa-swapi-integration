@@ -24,9 +24,6 @@ public class PeopleServiceImpl implements PeopleService {
 
     @Override
     public ResponseWrapperPaged<PeopleDTO> getAllPeople(int page, int limit){
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         ResponseEntity<ResponseWrapperPaged<PeopleDTO>> responseEntity = restTemplate.exchange(BASE_URL_PEOPLE + "?page=" + page + "&limit=" + limit,
                 HttpMethod.GET, null, new ParameterizedTypeReference<ResponseWrapperPaged<PeopleDTO>>() {});
