@@ -33,7 +33,7 @@ public class StarshipControllerTest {
 
 
     @Test
-    public void getAllStarshipTest() throws Exception {
+    public void getAllStarshipTest() {
         ResponseWrapperPaged<StarshipDTO> expectedStarship = new ResponseWrapperPaged<>();
         when(starshipService.getAllStarship(1,5)).thenReturn(expectedStarship);
 
@@ -45,7 +45,7 @@ public class StarshipControllerTest {
     }
 
     @Test
-    public void getAllStarshipRuntimeExceptionTest() throws Exception {
+    public void getAllStarshipRuntimeExceptionTest() {
         when(starshipService.getAllStarship(1,5)).thenThrow(RuntimeException.class);
 
         ResponseEntity<ResponseWrapperPaged<StarshipDTO>> actualStarship = starshipController.getAllStarship(1,5);

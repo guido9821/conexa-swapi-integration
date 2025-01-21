@@ -104,7 +104,7 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void findPeopleByIdRuntimeExceptionTest() throws IOException {
+    public void findPeopleByIdRuntimeExceptionTest() {
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
@@ -119,7 +119,7 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void findPeopleByIdItemNotFoundExceptionTest() throws IOException {
+    public void findPeopleByIdItemNotFoundExceptionTest() {
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 

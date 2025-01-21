@@ -50,7 +50,7 @@ public class SpeciesController {
             @ApiResponse(responseCode = "404", description = "Especie no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<SpeciesDTO> findSpeciesById(@PathVariable int id) throws IOException {
+    public ResponseEntity<SpeciesDTO> findSpeciesById(@PathVariable int id) {
         try {
             SpeciesDTO speciesDTO = speciesService.findSpeciesById(id);
             return new ResponseEntity<>(speciesDTO, HttpStatus.OK);

@@ -1,6 +1,5 @@
 package com.conexa.swapi_integration.util;
 
-import com.conexa.swapi_integration.dto.FilmDTO;
 import com.conexa.swapi_integration.dto.ResultDTO;
 import com.conexa.swapi_integration.model.ResponseWrapper;
 import org.springframework.http.ResponseEntity;

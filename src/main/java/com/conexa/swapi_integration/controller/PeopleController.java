@@ -51,7 +51,7 @@ public class PeopleController {
             @ApiResponse(responseCode = "404", description = "Persona no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<PeopleDTO> getPersonById(@PathVariable int id) throws IOException {
+    public ResponseEntity<PeopleDTO> getPersonById(@PathVariable int id) {
         try{
             PeopleDTO peopleDTO = peopleService.findPeopleById(id);
             return new ResponseEntity<>(peopleDTO,HttpStatus.OK);
@@ -69,7 +69,7 @@ public class PeopleController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = PeopleDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<PeopleDTO>> getPeopleByName(@RequestParam String name) throws IOException {
+    public ResponseEntity<List<PeopleDTO>> getPeopleByName(@RequestParam String name) {
         try {
             List<PeopleDTO> peopleDTOS =  peopleService.findPeopleByName(name);
             return new ResponseEntity<>(peopleDTOS,HttpStatus.OK);

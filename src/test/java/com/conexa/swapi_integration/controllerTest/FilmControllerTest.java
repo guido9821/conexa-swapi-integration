@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
@@ -34,7 +33,7 @@ public class FilmControllerTest {
 
 
     @Test
-    public void getAllFilmsTest() throws Exception {
+    public void getAllFilmsTest() {
         List<FilmDTO> expectedFilms = Arrays.asList(new FilmDTO(), new FilmDTO());
         when(filmService.getAllFilms()).thenReturn(expectedFilms);
 
