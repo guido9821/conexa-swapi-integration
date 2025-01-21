@@ -2,33 +2,30 @@ package com.conexa.swapi_integration.serviceTest;
 
 
 import com.conexa.swapi_integration.dto.FilmDTO;
-import com.conexa.swapi_integration.model.ResponseWrapperPaged;
+import com.conexa.swapi_integration.dto.PlanetDTO;
 import com.conexa.swapi_integration.service.impl.FilmServiceImpl;
-import org.junit.Test;
+import com.conexa.swapi_integration.util.MapperUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class FilmServiceTest {
 
     @InjectMocks
@@ -84,7 +81,7 @@ public class FilmServiceTest {
         )).thenReturn(mockEntity);
 
         List<FilmDTO> result = filmServiceImpl.getAllFilms();
-        assertNull(result);
+        assertEquals(result, new ArrayList<>());
         verify(restTemplate, times(1)).exchange(
                 eq("https://www.swapi.tech/api/films/"),
                 eq(HttpMethod.GET),
@@ -92,6 +89,22 @@ public class FilmServiceTest {
                 eq(String.class)
         );
     }
+
+    @Test
+    public void findFilmExceptionTest() {
+
+        String jsonResponse = "{\"result\":{\"properties\":{\"title\":\"A New Hope\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(FilmDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> filmServiceImpl.getAllFilms());
+        }
+    }
+
 
     @Test
     public void findFilmByIdOkTest() {
@@ -107,6 +120,21 @@ public class FilmServiceTest {
         expectedFilm.setTitle("A New Hope");
 
         assertEquals(expectedFilm.getTitle(), actualFilm.getTitle());
+    }
+
+    @Test
+    public void findFilmByIdExceptionTest() {
+
+        String jsonResponse = "{\"result\":{\"properties\":{\"title\":\"A New Hope\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(FilmDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> filmServiceImpl.findFilmById(1));
+        }
     }
 
 
@@ -127,7 +155,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void findFilmModelIdOkTest() {
+    public void findFilmModelByIdOkTest() {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -141,5 +169,19 @@ public class FilmServiceTest {
 
         assertEquals(expectedFilm.getTitle(), actualPerson.get(0).getTitle());
     }
-    
+
+    @Test
+    public void findFilmByNameExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(FilmDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> filmServiceImpl.getFilmsByTitle("A New Hope"));
+        }
+    }
 }

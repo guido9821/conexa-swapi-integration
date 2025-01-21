@@ -5,7 +5,8 @@ import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PeopleService;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,10 +36,9 @@ public class PeopleServiceImpl implements PeopleService {
 
     @Override
     public PeopleDTO findPeopleById(int id) {
-
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_PEOPLE + id, HttpMethod.GET, null, String.class);
         try {
+             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_PEOPLE + id, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectFromJson(responseEntityRaw, PeopleDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -47,9 +47,10 @@ public class PeopleServiceImpl implements PeopleService {
 
     @Override
     public List<PeopleDTO> findPeopleByName(String name) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_PEOPLE + "?name=" +name, HttpMethod.GET, null, String.class);
         try {
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_PEOPLE + "?name=" +name, HttpMethod.GET, null, String.class);
+
             return MapperUtil.getObjectListFromJson(responseEntityRaw, PeopleDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

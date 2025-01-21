@@ -1,33 +1,31 @@
 package com.conexa.swapi_integration.serviceTest;
 
 
+import com.conexa.swapi_integration.dto.SpeciesDTO;
 import com.conexa.swapi_integration.dto.StarshipDTO;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.StarshipServiceImpl;
-import org.junit.Test;
+import com.conexa.swapi_integration.util.MapperUtil;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class StarshipServiceTest {
 
     @InjectMocks
@@ -103,6 +101,20 @@ public class StarshipServiceTest {
         assertEquals(expectedPerson.getName(), actualStarship.getName());
     }
 
+    @Test
+    public void findStarshipByIdExceptionTest() {
+
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Death Star\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipById(1));
+        }
+    }
+
 
     @Test
     public void findStarshipNameIdOkTest() {
@@ -121,7 +133,22 @@ public class StarshipServiceTest {
     }
 
     @Test
-    public void findStarshipModelIdOkTest() {
+    public void findStarshipsByNameExceptionTest()  {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Death Star\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipsByName("Death Star"));
+        }
+    }
+
+    @Test
+    public void findStarshipsByModelOkTest() {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"DS-1 Orbital Battle Station\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -134,6 +161,21 @@ public class StarshipServiceTest {
         expectedPerson.setName("DS-1 Orbital Battle Station");
 
         assertEquals(expectedPerson.getName(), actualPerson.get(0).getName());
+    }
+
+    @Test
+    public void findStarshipsByModelExceptionTest()  {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"model\":\"DS-1 Orbital Battle Station\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new IOException("Error parsing JSON"));
+            assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipsByModel("DS-1 Orbital Battle Station"));
+        }
     }
     
 }

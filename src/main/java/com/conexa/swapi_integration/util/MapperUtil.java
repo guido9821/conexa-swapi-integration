@@ -13,7 +13,7 @@ public class MapperUtil {
 
     public static <T> T getObjectFromJson(ResponseEntity<String> responseEntityRaw, Class<T> valueType) throws IOException {
         try {
-            ResponseWrapper<T> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), valueType);
+            ResponseWrapper<T> responseWrapper = ResponseWrapperUtil.fromJson(responseEntityRaw.getBody(), valueType);
                 return responseWrapper.getResultDTO().getProperties();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -22,7 +22,7 @@ public class MapperUtil {
 
     public static <T> List<T> getObjectListFromJson(ResponseEntity<String> responseEntityRaw, Class<T> valueType) throws IOException {
         try {
-            ResponseWrapper<T> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), valueType);
+            ResponseWrapper<T> responseWrapper = ResponseWrapperUtil.fromJson(responseEntityRaw.getBody(), valueType);
                 return getObjectList(responseWrapper.getResultDTOList());
         } catch (IOException e) {
             throw new RuntimeException(e);
