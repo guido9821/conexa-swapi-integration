@@ -31,7 +31,7 @@ public class ResponseWrapperUtil {
                 );
                 wrapper.setResultDTO(result);
             }
-        }catch (IOException ex){
+        }catch (IOException  | IllegalArgumentException ex){
             throw new IOException("Error al procesar el resultado");
         }
         return wrapper;
