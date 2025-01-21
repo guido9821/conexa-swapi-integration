@@ -3,6 +3,7 @@ package com.conexa.swapi_integration.controller;
 import com.conexa.swapi_integration.dto.FilmDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.service.FilmService;
+import com.sun.javafx.collections.MappingChange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

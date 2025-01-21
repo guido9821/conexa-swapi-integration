@@ -45,7 +45,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void getAllVehicleRuntimeExceptionTest() {
+    public void getAllVehicleRuntimeExceptionTest() throws Exception {
         when(vehicleService.getAllVehicle(1,5)).thenThrow(RuntimeException.class);
 
         ResponseEntity<ResponseWrapperPaged<VehicleDTO>> actualVehicle = vehicleController.getAllVehicle(1,5);

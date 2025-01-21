@@ -2,6 +2,7 @@ package com.conexa.swapi_integration.serviceTest;
 
 
 import com.conexa.swapi_integration.dto.SpeciesDTO;
+import com.conexa.swapi_integration.dto.SpeciesDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.SpeciesServiceImpl;
