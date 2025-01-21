@@ -1,13 +1,16 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.StarshipDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.StarshipService;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -35,35 +38,44 @@ public class StarshipServiceImpl implements StarshipService {
 
 
     @Override
-    public StarshipDTO findStarshipById(int id) {
+    public StarshipDTO findStarshipById(int id) throws IOException {
         try {
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
             return  MapperUtil.getObjectFromJson(responseEntityRaw, StarshipDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        }catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Nave espacial no encontrada con ID: " + id);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<StarshipDTO> findStarshipsByName(String name) {
+    public List<StarshipDTO> findStarshipsByName(String name) throws IOException {
         try {
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_STARSHIP + "?name=" + name, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, StarshipDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Nave espacial no encontrada con nombre: " + name);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<StarshipDTO> findStarshipsByModel(String model) {
+    public List<StarshipDTO> findStarshipsByModel(String model) throws IOException {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_STARSHIP + "searchByModel/?model=" + model, HttpMethod.GET, null, String.class);
         try {
             return MapperUtil.getObjectListFromJson(responseEntityRaw, StarshipDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Nave espacial no encontrada con modelo: " + model);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 }

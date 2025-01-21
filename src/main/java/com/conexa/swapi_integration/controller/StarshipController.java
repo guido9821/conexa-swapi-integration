@@ -1,6 +1,7 @@
 package com.conexa.swapi_integration.controller;
 
 import com.conexa.swapi_integration.dto.StarshipDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.StarshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,8 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,10 +35,16 @@ public class StarshipController {
                     content = @Content(schema = @Schema(implementation = ResponseWrapperPaged.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseWrapperPaged<StarshipDTO> getAllStarship(
+    public ResponseEntity<ResponseWrapperPaged<StarshipDTO>> getAllStarship(
             @Parameter(description = "Número de página (por defecto: 1)", example = "1") @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "Cantidad de elementos por página (por defecto: 5)", example = "5") @RequestParam(defaultValue = "5") int limit) {
-        return starshipService.getAllStarship(page, limit);
+        try{
+            ResponseWrapperPaged<StarshipDTO> starshipDTOResponseWrapperPaged = starshipService.getAllStarship(page, limit);
+            return new ResponseEntity<>(starshipDTOResponseWrapperPaged, HttpStatus.OK);
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 
     @GetMapping("/starships/{id}")
@@ -45,8 +55,15 @@ public class StarshipController {
             @ApiResponse(responseCode = "404", description = "Nave espacial no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public StarshipDTO findStarshipById(@Parameter(description = "ID de la nave espacial a buscar", example = "1", required = true) @PathVariable int id) {
-        return starshipService.findStarshipById(id);
+    public ResponseEntity<StarshipDTO> findStarshipById(@Parameter(description = "ID de la nave espacial a buscar", example = "1", required = true) @PathVariable int id) throws IOException {
+        try {
+            StarshipDTO starshipDTO = starshipService.findStarshipById(id);
+            return new ResponseEntity<>(starshipDTO,HttpStatus.OK);
+        }catch (ItemNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/starships/searchByName/")
@@ -56,8 +73,15 @@ public class StarshipController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = StarshipDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public List<StarshipDTO> findStarshipsByName(@Parameter(description = "Nombre de la nave espacial a buscar", example = "Millennium Falcon", required = true) @RequestParam String name) {
-        return starshipService.findStarshipsByName(name);
+    public ResponseEntity<List<StarshipDTO>> findStarshipsByName(@Parameter(description = "Nombre de la nave espacial a buscar", example = "Millennium Falcon", required = true) @RequestParam String name) throws IOException {
+        try {
+            List<StarshipDTO> starshipDTOS = starshipService.findStarshipsByName(name);
+            return new ResponseEntity<>(starshipDTOS, HttpStatus.OK);
+        }catch (ItemNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/starships/searchByModel/")
@@ -67,7 +91,14 @@ public class StarshipController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = StarshipDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public List<StarshipDTO> findStarshipsByModel(@Parameter(description = "Modelo de la nave espacial a buscar", example = "YT-1300 light freighter", required = true) @RequestParam String model) {
-        return starshipService.findStarshipsByModel(model);
+    public ResponseEntity<List<StarshipDTO>> findStarshipsByModel(@Parameter(description = "Modelo de la nave espacial a buscar", example = "YT-1300 light freighter", required = true) @RequestParam String model) throws IOException {
+        try {
+            List<StarshipDTO> starshipDTOS = starshipService.findStarshipsByModel(model);
+            return new ResponseEntity<>(starshipDTOS, HttpStatus.OK);
+        }catch (ItemNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.conexa.swapi_integration.serviceTest;
 
-import com.conexa.swapi_integration.dto.StarshipDTO;
 import com.conexa.swapi_integration.dto.VehicleDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.VehicleServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
@@ -15,6 +15,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -85,7 +86,7 @@ public class VehicleServiceTest {
     }
 
     @Test
-    public void findSpecieByIdOkTest() {
+    public void findSpecieByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Sand Crawler\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -101,22 +102,40 @@ public class VehicleServiceTest {
     }
 
     @Test
-    public void findVehicleByIdExceptionTest() {
+    public void findVehicleByIdItemNotFoundExceptionTest() {
 
-        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Sand Crawler\"}}}";
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(VehicleDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> vehicleServiceImpl.findVehicleById(1));
+        }
+    }
+
+    @Test
+    public void findVehicleByIdRuntimeExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(VehicleDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> vehicleServiceImpl.findVehicleById(1));
         }
     }
 
 
     @Test
-    public void findVehiclesNameIdOkTest() {
+    public void findVehiclesNameIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Sand Crawler\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -132,23 +151,39 @@ public class VehicleServiceTest {
     }
 
     @Test
-    public void findVehiclesByNameExceptionTest()  {
-
-        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Sand Crawler\"}}]}";
+    public void findVehicleByNameItemNotFoundExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Sand Crawler\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(VehicleDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
-            assertThrows(RuntimeException.class, () -> vehicleServiceImpl.findVehiclesByName("and Crawler"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> vehicleServiceImpl.findVehiclesByName("Sand Crawler"));
+        }
+
+    }
+
+    @Test
+    public void findVehicleByNameRuntimeExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Sand Crawler\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(VehicleDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+            assertThrows(RuntimeException.class, () -> vehicleServiceImpl.findVehiclesByName("Sand Crawler"));
         }
     }
 
 
     @Test
-    public void findVehicleModelIdOkTest() {
+    public void findVehicleModelIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"model\":\"Digger Crawler\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -164,16 +199,32 @@ public class VehicleServiceTest {
     }
 
     @Test
-    public void findVehiclesByModelExceptionTest()  {
-
-        String jsonResponse = "{\"result\":[{\"properties\":{\"model\":\"Digger Crawler\"}}]}";
+    public void findVehicleByModelItemNotFoundExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Digger Crawler\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(VehicleDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> vehicleServiceImpl.findVehiclesByModel("Digger Crawler"));
+        }
+
+    }
+
+    @Test
+    public void findVehicleByModelRuntimeExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Digger Crawler\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(VehicleDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> vehicleServiceImpl.findVehiclesByModel("Digger Crawler"));
         }
     }

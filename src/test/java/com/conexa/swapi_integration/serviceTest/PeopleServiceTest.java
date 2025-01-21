@@ -1,6 +1,7 @@
 package com.conexa.swapi_integration.serviceTest;
 
 import com.conexa.swapi_integration.dto.PeopleDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.PeopleServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
@@ -14,6 +15,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -86,7 +88,7 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void findPeopleByIdOkTest() {
+    public void findPeopleByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -102,7 +104,7 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void findPeopleByIdExceptionTest() throws IOException {
+    public void findPeopleByIdRuntimeExceptionTest() throws IOException {
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
@@ -110,14 +112,29 @@ public class PeopleServiceTest {
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(PeopleDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
             assertThrows(RuntimeException.class, () -> peopleServiceImpl.findPeopleById(1));
         }
     }
 
     @Test
-    public void findPeopleNameIdOkTest() {
+    public void findPeopleByIdItemNotFoundExceptionTest() throws IOException {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(PeopleDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> peopleServiceImpl.findPeopleById(1));
+        }
+    }
+
+    @Test
+    public void findPeopleNameIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Luke Skywalker\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -133,7 +150,7 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void findPeopleByNameIdExceptionTest()  {
+    public void findPeopleByNameIdRuntimeExceptionTest()  {
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Luke Skywalker\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
@@ -141,9 +158,24 @@ public class PeopleServiceTest {
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(PeopleDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
             assertThrows(RuntimeException.class, () -> peopleServiceImpl.findPeopleByName("Luke Skywalker"));
+        }
+    }
+
+    @Test
+    public void findPeopleByNameIdItemNotFoundExceptionTest()  {
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Luke Skywalker\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(PeopleDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> peopleServiceImpl.findPeopleByName("Luke Skywalker"));
         }
     }
 }

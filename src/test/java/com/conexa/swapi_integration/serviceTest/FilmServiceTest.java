@@ -3,6 +3,7 @@ package com.conexa.swapi_integration.serviceTest;
 
 import com.conexa.swapi_integration.dto.FilmDTO;
 import com.conexa.swapi_integration.dto.PlanetDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.service.impl.FilmServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -107,7 +109,7 @@ public class FilmServiceTest {
 
 
     @Test
-    public void findFilmByIdOkTest() {
+    public void findFilmByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"title\":\"A New Hope\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -123,7 +125,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void findFilmByIdExceptionTest() {
+    public void findFilmByIdRuntimeExceptionTest() {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"title\":\"A New Hope\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -132,14 +134,29 @@ public class FilmServiceTest {
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(FilmDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
             assertThrows(RuntimeException.class, () -> filmServiceImpl.findFilmById(1));
+        }
+    }
+
+    @Test
+    public void findFilmByIdItemNotFoundExceptionTest() {
+
+        String jsonResponse = "{\"result\":{\"properties\":{\"title\":\"A New Hope\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(FilmDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+            assertThrows(ItemNotFoundException.class, () -> filmServiceImpl.findFilmById(1));
         }
     }
 
 
     @Test
-    public void findFilmTitleIdOkTest() {
+    public void findFilmTitleIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -155,7 +172,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void findFilmModelByIdOkTest() {
+    public void findFilmModelByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -171,7 +188,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void findFilmByNameExceptionTest() {
+    public void findFilmByNameItemNotFoundExceptionTest() {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -180,7 +197,22 @@ public class FilmServiceTest {
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(FilmDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+            assertThrows(ItemNotFoundException.class, () -> filmServiceImpl.getFilmsByTitle("A New Hope"));
+        }
+    }
+
+    @Test
+    public void findFilmByNameRuntimeExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"title\":\"A New Hope\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(FilmDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
             assertThrows(RuntimeException.class, () -> filmServiceImpl.getFilmsByTitle("A New Hope"));
         }
     }
