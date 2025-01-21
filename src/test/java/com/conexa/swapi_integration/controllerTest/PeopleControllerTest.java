@@ -2,7 +2,6 @@ package com.conexa.swapi_integration.controllerTest;
 
 import com.conexa.swapi_integration.controller.PeopleController;
 import com.conexa.swapi_integration.dto.PeopleDTO;
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PeopleService;
@@ -32,7 +31,7 @@ public class PeopleControllerTest {
     private PeopleController peopleController;
 
     @Test
-    public void getAllPeoplesTest() throws Exception {
+    public void getAllPeoplesTest() {
         ResponseWrapperPaged<PeopleDTO> expectedPeople = new ResponseWrapperPaged<>();
         when(peopleService.getAllPeople(1,5)).thenReturn(expectedPeople);
 
@@ -44,7 +43,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void getAllPeoplesRuntimeExceptionTest() throws Exception {
+    public void getAllPeoplesRuntimeExceptionTest() {
         when(peopleService.getAllPeople(1,5)).thenThrow(RuntimeException.class);
 
         ResponseEntity<ResponseWrapperPaged<PeopleDTO>> actualPeople = peopleController.getAllPeople(1,5);

@@ -34,7 +34,7 @@ public class PlanetControllerTest {
 
 
     @Test
-    public void getAllPlanetsTest() throws Exception {
+    public void getAllPlanetsTest() {
         ResponseWrapperPaged<PlanetDTO> expectedPlanet = new ResponseWrapperPaged<>();
         when(planetService.getAllPlanets(1,5)).thenReturn(expectedPlanet);
 
@@ -46,7 +46,7 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void getAllPlanetsRuntimeExceptionTest() throws Exception {
+    public void getAllPlanetsRuntimeExceptionTest() {
         when(planetService.getAllPlanets(1,5)).thenThrow(RuntimeException.class);
 
         ResponseEntity<ResponseWrapperPaged<PlanetDTO>> actualPlanet = planetController.getAllPlanets(1,5);
