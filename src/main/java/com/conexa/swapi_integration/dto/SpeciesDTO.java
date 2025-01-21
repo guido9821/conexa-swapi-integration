@@ -2,36 +2,51 @@ package com.conexa.swapi_integration.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(description = "Datos de una especie del universo de Star Wars")
 public class SpeciesDTO {
 
+    @Schema(description = "Nombre de la especie", example = "Human")
     private String name;
+
+    @Schema(description = "Clasificación de la especie", example = "mammal")
     private String classification;
+
+    @Schema(description = "Designación de la especie", example = "sentient")
     private String designation;
 
+    @Schema(description = "Altura promedio de la especie", example = "180")
     @JsonProperty("average_height")
     private String averageHeight;
 
+    @Schema(description = "Promedio de vida de la especie", example = "120")
     @JsonProperty("average_lifespan")
     private String averageLifespan;
 
+    @Schema(description = "Colores de ojos comunes de la especie", example = "blue, brown, hazel")
     @JsonProperty("eye_colors")
     private String eyeColors;
 
+    @Schema(description = "Colores de pelo comunes de la especie", example = "blond, brown, black")
     @JsonProperty("hair_colors")
     private String hairColors;
 
+    @Schema(description = "Colores de piel comunes de la especie", example = "fair, brown, white")
     @JsonProperty("skin_colors")
     private String skinColors;
 
+    @Schema(description = "Idioma hablado por la especie", example = "Galactic Basic")
     private String language;
 
+    @Schema(description = "URL del planeta natal de la especie", example = "https://swapi.dev/api/planets/9/")
     @JsonProperty("homeworld")
     private String homeWorld;
 
+    @Schema(description = "Lista de URLs de personas pertenecientes a esta especie")
     private List<String> people;
 
     public String getName() {

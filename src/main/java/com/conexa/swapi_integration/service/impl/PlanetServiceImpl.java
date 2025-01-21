@@ -1,16 +1,16 @@
 package com.conexa.swapi_integration.service.impl;
 
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.PlanetDTO;
-import com.conexa.swapi_integration.model.ResponseWrapper;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PlanetService;
 import com.conexa.swapi_integration.util.MapperUtil;
-import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -37,24 +37,30 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public PlanetDTO findPlanetById(int id) {
+    public PlanetDTO findPlanetById(int id) throws IOException {
         try {
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_PLANETS + id, HttpMethod.GET, null, String.class);
                 return MapperUtil.getObjectFromJson(responseEntityRaw, PlanetDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        }catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Planeta no encontrado con ID: " + id);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<PlanetDTO> findPlanetByName(String name) {
+    public List<PlanetDTO> findPlanetByName(String name) throws IOException {
         try {
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                     BASE_URL_PLANETS + "?name=" + name, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, PlanetDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        }catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Planeta no encontrado con nombre " + name);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 }

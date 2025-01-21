@@ -1,11 +1,15 @@
 package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.FilmDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.service.FilmService;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -33,24 +37,30 @@ public class FilmServiceImpl implements FilmService{
         }}
 
     @Override
-    public FilmDTO findFilmById(int id) {
+    public FilmDTO findFilmById(int id) throws IOException {
         try {
             ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                     BASE_URL_FILMS + id, HttpMethod.GET, null, String.class);
-            return MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+             return MapperUtil.getObjectFromJson(responseEntityRaw, FilmDTO.class);
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Película no encontrada con ID: " + id);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<FilmDTO>getFilmsByTitle(String title) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_FILMS + "?title=" + title, HttpMethod.GET, null, String.class);
+    public List<FilmDTO> getFilmsByTitle(String title) throws IOException {
         try {
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_FILMS + "?title=" + title, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, FilmDTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new ItemNotFoundException("Película no encontrada con titulo: " +title);
+            }
+            throw new RuntimeException("Error al comunicarse con el servicio externo: " + e.getMessage(), e);
         }
     }
 }

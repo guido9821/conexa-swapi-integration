@@ -2,28 +2,48 @@ package com.conexa.swapi_integration.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(description = "Datos de una película de Star Wars") // Descripción general del DTO
 public class FilmDTO {
+
+    @Schema(description = "Título de la película", example = "A New Hope")
     private String title;
 
+    @Schema(description = "Número de episodio", example = "4")
     @JsonProperty("episode_id")
     private String episodeId;
+
+    @Schema(description = "Director de la película", example = "George Lucas")
     private String director;
+
+    @Schema(description = "Productor(es) de la película", example = "Gary Kurtz, Rick McCallum")
     private String producer;
 
+    @Schema(description = "Fecha de lanzamiento", example = "1977-05-25")
     @JsonProperty("release_date")
     private String releaseDate;
 
+    @Schema(description = "Texto de apertura de la película", example = "It is a period of civil war...")
     @JsonProperty("opening_crawl")
     private String openingCrawl;
 
+    @Schema(description = "Lista de personajes que aparecen en la película")
     private List<String> characters;
+
+    @Schema(description = "Lista de naves espaciales que aparecen en la película")
     private List<String> starships;
+
+    @Schema(description = "Lista de vehículos que aparecen en la película")
     private List<String> vehicles;
+
+    @Schema(description = "Lista de planetas que aparecen en la película")
     private List<String> planets;
+
+    @Schema(description = "Lista de especies que aparecen en la película")
     private List<String> species;
 
     public List<String> getPlanets() {

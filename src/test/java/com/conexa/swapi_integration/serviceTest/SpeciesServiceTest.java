@@ -1,23 +1,23 @@
 package com.conexa.swapi_integration.serviceTest;
 
 
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.SpeciesDTO;
+import com.conexa.swapi_integration.dto.SpeciesDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.SpeciesServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class SpeciesServiceTest {
     }
 
     @Test
-    public void getAllplanetsOkTest() {
+    public void getAllspeciessOkTest() {
 
         ResponseWrapperPaged<SpeciesDTO> mockResponse = new ResponseWrapperPaged<>();
         mockResponse.setResults(Collections.singletonList(new SpeciesDTO()));
@@ -71,7 +71,7 @@ public class SpeciesServiceTest {
     }
 
     @Test
-    public void getAllSpeciessNullTest() {
+    public void getAllSpeciesNullTest() {
 
         ResponseEntity<ResponseWrapperPaged<SpeciesDTO>> mockEntity = new ResponseEntity<>(null, HttpStatus.OK);
 
@@ -88,7 +88,7 @@ public class SpeciesServiceTest {
     }
 
     @Test
-    public void findSpecieByIdOkTest() {
+    public void findSpecieByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Human\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -104,22 +104,40 @@ public class SpeciesServiceTest {
     }
 
     @Test
-    public void findSpeciesByIdExceptionTest() throws IOException {
-        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Human\"}}}";
+    public void findSpeciesByIdItemNotFoundExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(SpeciesDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> speciesServiceImpl.findSpeciesById(1));
+        }
+    }
+
+    @Test
+    public void findSpeciesByIdRuntimeExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(SpeciesDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> speciesServiceImpl.findSpeciesById(1));
         }
     }
 
 
     @Test
-    public void findSpeciesNameOkTest() {
+    public void findSpeciesNameOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Human\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -134,18 +152,36 @@ public class SpeciesServiceTest {
         assertEquals(expectedPerson.getName(), actualPerson.get(0).getName());
     }
 
+
     @Test
-    public void findSpeciesByNameExceptionTest()  {
-        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Human\"}}]}";
+    public void findSpeciesByNameItemNotFoundExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Human\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(SpeciesDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> speciesServiceImpl.findSpeciesByName("Human"));
+        }
+
+    }
+
+    @Test
+    public void findSpeciesByNameRuntimeExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Human\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(SpeciesDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
             assertThrows(RuntimeException.class, () -> speciesServiceImpl.findSpeciesByName("Human"));
         }
     }
+    
 }
