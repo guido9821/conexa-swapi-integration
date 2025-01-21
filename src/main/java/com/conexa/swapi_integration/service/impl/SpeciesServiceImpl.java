@@ -2,11 +2,9 @@ package com.conexa.swapi_integration.service.impl;
 
 import com.conexa.swapi_integration.dto.SpeciesDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
-import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.SpeciesService;
 import com.conexa.swapi_integration.util.MapperUtil;
-import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

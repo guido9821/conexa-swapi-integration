@@ -2,8 +2,6 @@ package com.conexa.swapi_integration.controller;
 
 
 import com.conexa.swapi_integration.dto.VehicleDTO;
-import com.conexa.swapi_integration.dto.VehicleDTO;
-import com.conexa.swapi_integration.dto.VehicleDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.VehicleService;
@@ -57,7 +55,7 @@ public class VehicleController {
             @ApiResponse(responseCode = "404", description = "Vehículo no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<VehicleDTO> findVehicleById(@Parameter(description = "ID del vehículo a buscar", example = "4", required = true) @PathVariable int id) throws IOException {
+    public ResponseEntity<VehicleDTO> findVehicleById(@Parameter(description = "ID del vehículo a buscar", example = "4", required = true) @PathVariable int id) {
         try {
             VehicleDTO vehicleDTO = vehicleService.findVehicleById(id);
             return new ResponseEntity<>(vehicleDTO,HttpStatus.OK);
@@ -75,7 +73,7 @@ public class VehicleController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = VehicleDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<VehicleDTO>> findVehiclesByName(@Parameter(description = "Nombre del vehículo a buscar", example = "Sand Crawler", required = true) @RequestParam String name) throws IOException {
+    public ResponseEntity<List<VehicleDTO>> findVehiclesByName(@Parameter(description = "Nombre del vehículo a buscar", example = "Sand Crawler", required = true) @RequestParam String name) {
         try {
             List<VehicleDTO> vehicleDTOS = vehicleService.findVehiclesByName(name);
             return new ResponseEntity<>(vehicleDTOS, HttpStatus.OK);
@@ -93,7 +91,7 @@ public class VehicleController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = VehicleDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<VehicleDTO>> findVehiclesByModel(@Parameter(description = "Modelo del vehículo a buscar", example = "Digger Crawler", required = true) @RequestParam String model) throws IOException {
+    public ResponseEntity<List<VehicleDTO>> findVehiclesByModel(@Parameter(description = "Modelo del vehículo a buscar", example = "Digger Crawler", required = true) @RequestParam String model) {
         try {
             List<VehicleDTO> vehicleDTOS = vehicleService.findVehiclesByModel(model);
             return new ResponseEntity<>(vehicleDTOS, HttpStatus.OK);

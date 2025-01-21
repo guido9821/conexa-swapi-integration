@@ -55,7 +55,7 @@ public class StarshipController {
             @ApiResponse(responseCode = "404", description = "Nave espacial no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<StarshipDTO> findStarshipById(@Parameter(description = "ID de la nave espacial a buscar", example = "1", required = true) @PathVariable int id) throws IOException {
+    public ResponseEntity<StarshipDTO> findStarshipById(@Parameter(description = "ID de la nave espacial a buscar", example = "1", required = true) @PathVariable int id) {
         try {
             StarshipDTO starshipDTO = starshipService.findStarshipById(id);
             return new ResponseEntity<>(starshipDTO,HttpStatus.OK);
@@ -73,7 +73,7 @@ public class StarshipController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = StarshipDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<StarshipDTO>> findStarshipsByName(@Parameter(description = "Nombre de la nave espacial a buscar", example = "Millennium Falcon", required = true) @RequestParam String name) throws IOException {
+    public ResponseEntity<List<StarshipDTO>> findStarshipsByName(@Parameter(description = "Nombre de la nave espacial a buscar", example = "Millennium Falcon", required = true) @RequestParam String name) {
         try {
             List<StarshipDTO> starshipDTOS = starshipService.findStarshipsByName(name);
             return new ResponseEntity<>(starshipDTOS, HttpStatus.OK);
@@ -91,7 +91,7 @@ public class StarshipController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = StarshipDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<StarshipDTO>> findStarshipsByModel(@Parameter(description = "Modelo de la nave espacial a buscar", example = "YT-1300 light freighter", required = true) @RequestParam String model) throws IOException {
+    public ResponseEntity<List<StarshipDTO>> findStarshipsByModel(@Parameter(description = "Modelo de la nave espacial a buscar", example = "YT-1300 light freighter", required = true) @RequestParam String model) {
         try {
             List<StarshipDTO> starshipDTOS = starshipService.findStarshipsByModel(model);
             return new ResponseEntity<>(starshipDTOS, HttpStatus.OK);
