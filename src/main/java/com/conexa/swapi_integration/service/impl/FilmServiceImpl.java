@@ -32,13 +32,13 @@ public class FilmServiceImpl implements FilmService{
 
             ResponseWrapper<FilmDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), FilmDTO.class);
 
-            if (responseWrapper.getResultDTOList() != null) {
+            if (!responseWrapper.getResultDTOList().isEmpty()) {
                 return getFilmList(responseWrapper.getResultDTOList());
             }
         } catch (IOException e) {
             throw new RuntimeException("Error al procesar la respuesta de la API: " + e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

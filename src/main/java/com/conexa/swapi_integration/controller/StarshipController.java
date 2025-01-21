@@ -16,22 +16,22 @@ public class StarshipController {
     private StarshipService starshipService;
 
     @GetMapping("/starships/")
-    public ResponseWrapperPaged<StarshipDTO> getAllPeople(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5")int limit){
+    public ResponseWrapperPaged<StarshipDTO> getAllStarship(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5")int limit){
         return starshipService.getAllStarship(page, limit);
     }
 
     @GetMapping("/starships/{id}")
-    public StarshipDTO getPersonById(@PathVariable int id) {
+    public StarshipDTO findStarshipById(@PathVariable int id) {
         return starshipService.findStarshipById(id);
     }
 
     @GetMapping("/starships/searchByName/")
-    public List<StarshipDTO> searchByName(@RequestParam String name) {
+    public List<StarshipDTO> findStarshipsByName(@RequestParam String name) {
         return starshipService.findStarshipsByName(name);
     }
 
     @GetMapping("/starships/searchByModel/")
-    public List<StarshipDTO> searchByModel(@RequestParam String model) {
+    public List<StarshipDTO> findStarshipsByModel(@RequestParam String model) {
         return starshipService.findStarshipsByModel(model);
     }
 }

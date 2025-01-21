@@ -42,13 +42,10 @@ public class StarshipServiceImpl implements StarshipService {
                 BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
         try {
             ResponseWrapper<StarshipDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), StarshipDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
                 return responseWrapper.getResultDTO().getProperties();
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class StarshipServiceImpl implements StarshipService {
     @Override
     public List<StarshipDTO> findStarshipsByModel(String model) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_STARSHIP + "?model=" + model, HttpMethod.GET, null, String.class);
+                BASE_URL_STARSHIP + "searchByModel/?model=" + model, HttpMethod.GET, null, String.class);
         try {
             return MapperUtil.getObjectListFromJson(responseEntityRaw, StarshipDTO.class);
         } catch (IOException e) {

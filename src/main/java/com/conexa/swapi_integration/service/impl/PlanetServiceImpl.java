@@ -38,16 +38,12 @@ public class PlanetServiceImpl implements PlanetService {
     public PlanetDTO findPlanetById(int id) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
                 BASE_URL_PLANETS + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
             ResponseWrapper<PlanetDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), PlanetDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
                 return responseWrapper.getResultDTO().getProperties();
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override

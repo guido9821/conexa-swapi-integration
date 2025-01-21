@@ -1,8 +1,8 @@
 package com.conexa.swapi_integration.serviceTest;
 
-import com.conexa.swapi_integration.dto.PeopleDTO;
+import com.conexa.swapi_integration.dto.PlanetDTO;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
-import com.conexa.swapi_integration.service.impl.PeopleServiceImpl;
+import com.conexa.swapi_integration.service.impl.PlanetServiceImpl;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -24,10 +24,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PeopleServiceTest {
+public class PlanetServiceTest {
 
     @InjectMocks
-    private PeopleServiceImpl peopleServiceImpl;
+    private PlanetServiceImpl planetServiceImpl;
 
     @Mock
     RestTemplate restTemplate;
@@ -38,28 +38,28 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void getAllPeopleOkTest() {
+    public void getAllplanetsOkTest() {
 
-        ResponseWrapperPaged<PeopleDTO> mockResponse = new ResponseWrapperPaged<>();
-        mockResponse.setResults(Collections.singletonList(new PeopleDTO()));
+        ResponseWrapperPaged<PlanetDTO> mockResponse = new ResponseWrapperPaged<>();
+        mockResponse.setResults(Collections.singletonList(new PlanetDTO()));
 
-        ResponseEntity<ResponseWrapperPaged<PeopleDTO>> mockEntity = mock(ResponseEntity.class);
+        ResponseEntity<ResponseWrapperPaged<PlanetDTO>> mockEntity = mock(ResponseEntity.class);
         when(mockEntity.getBody()).thenReturn(mockResponse);
 
         when(restTemplate.exchange(
-                eq("https://www.swapi.tech/api/people/?page=1&limit=10"),
+                eq("https://www.swapi.tech/api/planets/?page=1&limit=10"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class))
         ).thenReturn(mockEntity);
 
-        ResponseWrapperPaged<PeopleDTO> result = peopleServiceImpl.getAllPeople(1, 10);
+        ResponseWrapperPaged<PlanetDTO> result = planetServiceImpl.getAllPlanets(1, 10);
 
         assertNotNull(result);
         assertNotNull(result.getResults());
         assertEquals(1, result.getResults().size());
         verify(restTemplate, times(1)).exchange(
-                eq("https://www.swapi.tech/api/people/?page=1&limit=10"),
+                eq("https://www.swapi.tech/api/planets/?page=1&limit=10"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)
@@ -67,53 +67,52 @@ public class PeopleServiceTest {
     }
 
     @Test
-    public void getAllPeopleNullTest() {
+    public void getAllPlanetsNullTest() {
 
-        ResponseEntity<ResponseWrapperPaged<PeopleDTO>> mockEntity = new ResponseEntity<>(null, HttpStatus.OK);
+        ResponseEntity<ResponseWrapperPaged<PlanetDTO>> mockEntity = new ResponseEntity<>(null, HttpStatus.OK);
 
         when(restTemplate.exchange(
-                eq("https://www.swapi.tech/api/people/?page=1&limit=10"),
+                eq("https://www.swapi.tech/api/planets/?page=1&limit=10"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class))
         ).thenReturn(mockEntity);
 
-        ResponseWrapperPaged<PeopleDTO> result = peopleServiceImpl.getAllPeople(1, 10);
+        ResponseWrapperPaged<PlanetDTO> result = planetServiceImpl.getAllPlanets(1, 10);
 
         assertNull(result);
     }
 
     @Test
-    public void findPeopleByIdOkTest() {
+    public void findPlanetByIdOkTest() {
 
-        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Luke Skywalker\"}}}";
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Tatooine\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class))).thenReturn(responseEntityRaw);
 
-        PeopleDTO actualPerson = peopleServiceImpl.findPeopleById(1);
+        PlanetDTO actualPlanet = planetServiceImpl.findPlanetById(1);
 
-        PeopleDTO expectedPerson = new PeopleDTO();
-        expectedPerson.setName("Luke Skywalker");
+        PlanetDTO expectedPerson = new PlanetDTO();
+        expectedPerson.setName("Tatooine");
 
-        assertEquals(expectedPerson.getName(), actualPerson.getName());
+        assertEquals(expectedPerson.getName(), actualPlanet.getName());
     }
 
-    @Test
-    public void findPeopleNameIdOkTest() {
 
-        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Luke Skywalker\"}}]}";
+    @Test
+    public void findPlanetNameIdOkTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class))).thenReturn(responseEntityRaw);
 
-        List<PeopleDTO> actualPerson = peopleServiceImpl.findPeopleByName("Luke Skywalker");
+        List<PlanetDTO> actualPerson = planetServiceImpl.findPlanetByName("Tatooine");
 
-        PeopleDTO expectedPerson = new PeopleDTO();
-        expectedPerson.setName("Luke Skywalker");
+        PlanetDTO expectedPerson = new PlanetDTO();
+        expectedPerson.setName("Tatooine");
 
         assertEquals(expectedPerson.getName(), actualPerson.get(0).getName());
     }
 }
-
-

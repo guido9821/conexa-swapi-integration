@@ -20,12 +20,12 @@ public class SpeciesController {
     }
 
     @GetMapping("/species/{id}")
-    public SpeciesDTO getPersonById(@PathVariable int id) {
+    public SpeciesDTO findSpeciesById(@PathVariable int id) {
         return speciesService.findSpeciesById(id);
     }
 
     @GetMapping("/species/searchByName/")
-    public List<SpeciesDTO> getSpeciesByModel(@RequestParam String name) {
+    public List<SpeciesDTO> findSpeciesByName(@RequestParam String name) {
         return speciesService.findSpeciesByName(name);
     }
 }

@@ -41,19 +41,16 @@ public class SpeciesServiceImpl implements SpeciesService {
                 BASE_URL_SPECIES + id, HttpMethod.GET, null, String.class);
         try {
             ResponseWrapper<SpeciesDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), SpeciesDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
                 return responseWrapper.getResultDTO().getProperties();
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public List<SpeciesDTO> findSpeciesByName(String name) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_SPECIES + "?name=" + name, HttpMethod.GET, null, String.class);
+                BASE_URL_SPECIES + "searchByName/?name=" + name, HttpMethod.GET, null, String.class);
         try {
             return MapperUtil.getObjectListFromJson(responseEntityRaw, SpeciesDTO.class);
         } catch (IOException e) {

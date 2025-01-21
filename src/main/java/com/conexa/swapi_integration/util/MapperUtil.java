@@ -14,25 +14,19 @@ public class MapperUtil {
     public static <T> T getObjectFromJson(ResponseEntity<String> responseEntityRaw, Class<T> valueType) throws IOException {
         try {
             ResponseWrapper<T> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), valueType);
-            if(responseWrapper.getResultDTO() != null ){
                 return responseWrapper.getResultDTO().getProperties();
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static <T> List<T> getObjectListFromJson(ResponseEntity<String> responseEntityRaw, Class<T> valueType) throws IOException {
         try {
             ResponseWrapper<T> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), valueType);
-            if(responseWrapper.getResultDTOList() != null ){
                 return getObjectList(responseWrapper.getResultDTOList());
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static  <T>List<T> getObjectList(List<ResultDTO<T>> resultDTOList){
