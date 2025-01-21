@@ -1,8 +1,8 @@
 package com.conexa.swapi_integration.serviceTest;
 
 
-import com.conexa.swapi_integration.dto.SpeciesDTO;
 import com.conexa.swapi_integration.dto.StarshipDTO;
+import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.StarshipServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
@@ -16,6 +16,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -86,7 +87,7 @@ public class StarshipServiceTest {
     }
 
     @Test
-    public void findSpecieByIdOkTest() {
+    public void findSpecieByIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Death Star\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -101,23 +102,42 @@ public class StarshipServiceTest {
         assertEquals(expectedPerson.getName(), actualStarship.getName());
     }
 
-    @Test
-    public void findStarshipByIdExceptionTest() {
 
-        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Death Star\"}}}";
+    @Test
+    public void findStarshipByIdItemNotFoundExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(StarshipDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> starshipServiceImpl.findStarshipById(1));
+        }
+    }
+
+    @Test
+    public void findStarshipByIdRuntimeExceptionTest() {
+
+        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Tatooine\"}}]}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipById(1));
         }
     }
 
 
     @Test
-    public void findStarshipNameIdOkTest() {
+    public void findStarshipNameIdOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Death Star\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -132,23 +152,40 @@ public class StarshipServiceTest {
         assertEquals(expectedPerson.getName(), actualPerson.get(0).getName());
     }
 
-    @Test
-    public void findStarshipsByNameExceptionTest()  {
 
-        String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"Death Star\"}}]}";
+    @Test
+    public void findStarshipByNameItemNotFoundExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Death Star\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> starshipServiceImpl.findStarshipsByName("Death Star"));
+        }
+
+    }
+
+    @Test
+    public void findStarshipByNameRuntimeExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"Death Star\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipsByName("Death Star"));
         }
     }
 
     @Test
-    public void findStarshipsByModelOkTest() {
+    public void findStarshipsByModelOkTest() throws IOException {
 
         String jsonResponse = "{\"result\":[{\"properties\":{\"name\":\"DS-1 Orbital Battle Station\"}}]}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
@@ -163,17 +200,34 @@ public class StarshipServiceTest {
         assertEquals(expectedPerson.getName(), actualPerson.get(0).getName());
     }
 
-    @Test
-    public void findStarshipsByModelExceptionTest()  {
 
-        String jsonResponse = "{\"result\":[{\"properties\":{\"model\":\"DS-1 Orbital Battle Station\"}}]}";
+    @Test
+    public void findStarshipByModelItemNotFoundExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"DS-1 Orbital Battle Station\"}}}";
         ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
 
         try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
             mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
-                    .thenThrow(new IOException("Error parsing JSON"));
+                    .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+            assertThrows(ItemNotFoundException.class, () -> starshipServiceImpl.findStarshipsByModel("DS-1 Orbital Battle Station"));
+        }
+
+    }
+
+    @Test
+    public void findStarshipByModelRuntimeExceptionTest() {
+        String jsonResponse = "{\"result\":{\"properties\":{\"name\":\"DS-1 Orbital Battle Station\"}}}";
+        ResponseEntity<String> responseEntityRaw = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), eq(String.class))).thenReturn(responseEntityRaw);
+
+        try (MockedStatic<MapperUtil> mockedStatic = mockStatic(MapperUtil.class)) {
+            mockedStatic.when(() -> MapperUtil.getObjectListFromJson(any(), eq(StarshipDTO.class)))
+                    .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
             assertThrows(RuntimeException.class, () -> starshipServiceImpl.findStarshipsByModel("DS-1 Orbital Battle Station"));
         }
     }
