@@ -33,7 +33,7 @@ public class SpeciesControllerTest {
 
 
     @Test
-    public void getAllSpeciesTest() {
+    public void getAllSpeciesTest() throws Exception {
         ResponseWrapperPaged<SpeciesDTO> expectedFilms = new ResponseWrapperPaged<>();
         when(speciesService.getAllSpecies(1,5)).thenReturn(expectedFilms);
 
@@ -45,7 +45,7 @@ public class SpeciesControllerTest {
     }
 
     @Test
-    public void getAllSpeciesRuntimeExceptionTest() {
+    public void getAllSpeciesRuntimeExceptionTest() throws Exception {
         when(speciesService.getAllSpecies(1,5)).thenThrow(RuntimeException.class);
 
         ResponseEntity<ResponseWrapperPaged<SpeciesDTO>> actualSpecies = speciesController.getAllSpecies(1,5);

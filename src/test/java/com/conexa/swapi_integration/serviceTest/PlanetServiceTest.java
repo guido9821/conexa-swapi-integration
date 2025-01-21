@@ -1,10 +1,12 @@
 package com.conexa.swapi_integration.serviceTest;
 
+import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.PlanetDTO;
 import com.conexa.swapi_integration.exceptions.ItemNotFoundException;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.impl.PlanetServiceImpl;
 import com.conexa.swapi_integration.util.MapperUtil;
+import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
