@@ -3,35 +3,56 @@ package com.conexa.swapi_integration.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(description = "Datos de un vehículo del universo de Star Wars")
 public class VehicleDTO {
+
+    @Schema(description = "Nombre del vehículo", example = "Sand Crawler")
     private String name;
+
+    @Schema(description = "Modelo del vehículo", example = "Digger Crawler")
     private String model;
+
+    @Schema(description = "Fabricante del vehículo", example = "Corellia Mining Corporation")
     private String manufacturer;
 
+    @Schema(description = "Costo del vehículo en créditos", example = "150000")
     @JsonProperty("cost_in_credits")
     private String costInCredits;
 
+    @Schema(description = "Longitud del vehículo", example = "36.8")
     private String length;
 
+    @Schema(description = "Velocidad atmosférica máxima del vehículo", example = "30")
     @JsonProperty("max_atmosphering_speed")
     private String maxAtmospheringSpeed;
 
+    @Schema(description = "Tripulación del vehículo", example = "46")
     private String crew;
+
+    @Schema(description = "Número de pasajeros que puede transportar el vehículo", example = "30")
     private String passengers;
 
+    @Schema(description = "Capacidad de carga del vehículo", example = "50000")
     @JsonProperty("cargo_capacity")
     private String cargoCapacity;
 
+    @Schema(description = "Clase del vehículo", example = "wheeled")
     @JsonProperty("vehicle_class")
     private String vehicleClass;
 
-    private List<String> films;
-    private List<String> pilots;
+    @Schema(description = "Consumibles del vehículo", example = "2 months")
     private String consumables;
+
+    @Schema(description = "Lista de URLs de las películas en las que aparece el vehículo")
+    private List<String> films;
+
+    @Schema(description = "Lista de URLs de los pilotos del vehículo")
+    private List<String> pilots;
 
     public List<String> getFilms() {
         return films;

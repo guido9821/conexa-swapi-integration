@@ -1,12 +1,9 @@
 package com.conexa.swapi_integration.service.impl;
 
-import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.StarshipDTO;
-import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.StarshipService;
 import com.conexa.swapi_integration.util.MapperUtil;
-import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
