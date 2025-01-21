@@ -5,6 +5,7 @@ import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.SpeciesService;
 import com.conexa.swapi_integration.util.MapperUtil;
+import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -37,24 +38,20 @@ public class SpeciesServiceImpl implements SpeciesService {
 
     @Override
     public SpeciesDTO findSpeciesById(int id) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_SPECIES + id, HttpMethod.GET, null, String.class);
         try {
-            ResponseWrapper<SpeciesDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), SpeciesDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
-                return responseWrapper.getResultDTO().getProperties();
-            }
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_SPECIES + id, HttpMethod.GET, null, String.class);
+                return MapperUtil.getObjectFromJson(responseEntityRaw,SpeciesDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public List<SpeciesDTO> findSpeciesByName(String name) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_SPECIES + "?name=" + name, HttpMethod.GET, null, String.class);
         try {
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_SPECIES + "?name=" + name, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, SpeciesDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

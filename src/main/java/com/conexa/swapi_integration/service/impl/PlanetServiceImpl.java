@@ -1,10 +1,12 @@
 package com.conexa.swapi_integration.service.impl;
 
+import com.conexa.swapi_integration.dto.PeopleDTO;
 import com.conexa.swapi_integration.dto.PlanetDTO;
 import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.PlanetService;
 import com.conexa.swapi_integration.util.MapperUtil;
+import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -36,25 +38,20 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public PlanetDTO findPlanetById(int id) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_PLANETS + id, HttpMethod.GET, null, String.class);
-        System.out.println("Raw Response:\n" + responseEntityRaw.getBody());
         try {
-            ResponseWrapper<PlanetDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), PlanetDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
-                return responseWrapper.getResultDTO().getProperties();
-            }
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_PLANETS + id, HttpMethod.GET, null, String.class);
+                return MapperUtil.getObjectFromJson(responseEntityRaw, PlanetDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public List<PlanetDTO> findPlanetByName(String name) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_PLANETS + "?name=" + name, HttpMethod.GET, null, String.class);
         try {
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                    BASE_URL_PLANETS + "?name=" + name, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, PlanetDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

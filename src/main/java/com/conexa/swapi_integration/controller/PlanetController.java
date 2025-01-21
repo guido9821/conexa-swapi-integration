@@ -16,17 +16,17 @@ public class PlanetController {
     PlanetService planetService;
 
     @GetMapping("/planets/")
-    public ResponseWrapperPaged<PlanetDTO> getAllSpecies(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5")int limit){
+    public ResponseWrapperPaged<PlanetDTO> getAllPlanets(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5")int limit){
         return planetService.getAllPlanets(page, limit);
     }
 
     @GetMapping("/planets/{id}")
-    public PlanetDTO getPersonById(@PathVariable int id) {
+    public PlanetDTO findPlanetById(@PathVariable int id) {
         return planetService.findPlanetById(id);
     }
 
     @GetMapping("/planets/searchByName/")
-    public List<PlanetDTO> getSpeciesByModel(@RequestParam String name) {
+    public List<PlanetDTO> findPlanetByName(@RequestParam String name) {
         return planetService.findPlanetByName(name);
     } 
     

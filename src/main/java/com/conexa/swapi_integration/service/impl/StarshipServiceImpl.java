@@ -6,6 +6,7 @@ import com.conexa.swapi_integration.model.ResponseWrapper;
 import com.conexa.swapi_integration.model.ResponseWrapperPaged;
 import com.conexa.swapi_integration.service.StarshipService;
 import com.conexa.swapi_integration.util.MapperUtil;
+import com.conexa.swapi_integration.util.ResponseWrapperUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -38,24 +39,20 @@ public class StarshipServiceImpl implements StarshipService {
 
     @Override
     public StarshipDTO findStarshipById(int id) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
         try {
-            ResponseWrapper<StarshipDTO> responseWrapper = ResponseWrapper.fromJson(responseEntityRaw.getBody(), StarshipDTO.class);
-            if(responseWrapper.getResultDTO() != null ){
-                return responseWrapper.getResultDTO().getProperties();
-            }
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_STARSHIP + id, HttpMethod.GET, null, String.class);
+            return  MapperUtil.getObjectFromJson(responseEntityRaw, StarshipDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public List<StarshipDTO> findStarshipsByName(String name) {
-        ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_STARSHIP + "?name=" + name, HttpMethod.GET, null, String.class);
         try {
+            ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
+                BASE_URL_STARSHIP + "?name=" + name, HttpMethod.GET, null, String.class);
             return MapperUtil.getObjectListFromJson(responseEntityRaw, StarshipDTO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -65,7 +62,7 @@ public class StarshipServiceImpl implements StarshipService {
     @Override
     public List<StarshipDTO> findStarshipsByModel(String model) {
         ResponseEntity<String> responseEntityRaw = restTemplate.exchange(
-                BASE_URL_STARSHIP + "?model=" + model, HttpMethod.GET, null, String.class);
+                BASE_URL_STARSHIP + "searchByModel/?model=" + model, HttpMethod.GET, null, String.class);
         try {
             return MapperUtil.getObjectListFromJson(responseEntityRaw, StarshipDTO.class);
         } catch (IOException e) {
